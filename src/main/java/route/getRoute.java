@@ -15,10 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.maps.*;
 import com.google.maps.errors.ApiException;
-import com.google.maps.model.LatLng;
-import com.google.maps.model.TrafficModel;
-import com.google.maps.model.TravelMode;
-import com.google.maps.model.Unit;
+import com.google.maps.model.*;
 import okhttp3.Address;
 import org.apache.commons.math3.stat.inference.TestUtils;
 import org.json.JSONObject;
@@ -30,16 +27,11 @@ import static org.junit.Assert.assertThat;
 
 import com.google.maps.DirectionsApi.RouteRestriction;
 import com.google.maps.errors.NotFoundException;
-import com.google.maps.model.AddressType;
-import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.GeocodedWaypointStatus;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TrafficModel;
-import com.google.maps.model.TransitMode;
-import com.google.maps.model.TransitRoutingPreference;
 import com.google.maps.model.TravelMode;
 import com.google.maps.model.Unit;
-import java.time.Duration;
+
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -97,6 +89,16 @@ public class getRoute {
     public static DirectionsResult ConfirmRoute(DirectionsApiRequest req) throws IOException, InterruptedException, ApiException {
         DirectionsResult result = req.await();
         return result;
+    }
+
+    public static int getRouteTime(DirectionsResult result){
+        Duration buffer;
+        int timeMinutes;
+        buffer = result.routes[0].legs[0].duration;
+        timeMinutes = (int) buffer.inSeconds;
+        timeMinutes = timeMinutes/60;
+
+        return timeMinutes;
     }
 
 
