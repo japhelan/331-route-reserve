@@ -101,6 +101,17 @@ public class getRoute {
         return timeMinutes;
     }
 
+    public static void displaySummary(DirectionsResult result){
+        int numLegs,numSteps;
+         numLegs = result.routes[0].legs.length;
+        for (int i = 0; i < numLegs; i++){
+            numSteps = result.routes[0].legs[i].steps.length;
+            for (int j = 0; j < numSteps; j++){
+                System.out.println(result.routes[0].legs[i].steps[j].htmlInstructions);
+            }
+        }
+    }
+
 
 
 }
