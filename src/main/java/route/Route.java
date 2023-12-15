@@ -2,8 +2,14 @@ package route;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.Distance;
 import com.google.maps.model.TravelMode;
 
+import javax.print.attribute.standard.Destination;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
@@ -26,6 +32,9 @@ public class Route {
     private ArrayList<address> waypoints = new ArrayList<address>();
     private TravelMode mode;
     private String name;
+
+    private DirectionsApiRequest routeReq;
+    private DirectionsResult routeRes;
 
     public void setDestination(address destination) {
         Destination = destination;
@@ -67,5 +76,41 @@ public class Route {
         return name;
     }
 
+    public DirectionsApiRequest convertToReq() throws IOException, URISyntaxException, InterruptedException, ApiException {
+        routeReq = getRoute.makeRoute(Origin.returnAddress(),Destination.returnAddress());
+        return routeReq;
+    }
 
+    public DirectionsResult convertToRes() throws IOException, InterruptedException, ApiException {
+        routeRes = getRoute.ConfirmRoute(routeReq);
+        return routeRes;
+    }
+
+    public void showDirections(){
+        int numLegs,numSteps;
+        numLegs = routeRes.routes[0].legs.length;
+        for (int i = 0; i < numLegs; i++){
+            numSteps = routeRes.routes[0].legs[i].steps.length;
+            for (int j = 0; j < numSteps; j++){
+                System.out.println(routeRes.routes[0].legs[i].steps[j].htmlInstructions);
+            }
+        }
+    }
+
+
+    public void printSummary(){
+        System.out.println(name + ": ");
+        System.out.println(Origin.returnAddress() + " to " + Destination.returnAddress());
+        System.out.println("Distance: WIP");
+        System.out.println("Duration: WIP");
+
+    }
+
+    public DirectionsApiRequest getRouteReq() {
+        return routeReq;
+    }
+
+    public DirectionsResult getRouteRes() {
+        return routeRes;
+    }
 }

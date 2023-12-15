@@ -60,10 +60,6 @@ public class address {
         address = address.concat(" " + city);
         address = address.concat(" " + state);
 
-        if (this.zip != -1){
-            address = address.concat(" " + zip);
-        }
-
         return address;
     }
 

@@ -17,7 +17,7 @@ import static route.getRoute.makeRoute;
 
 public class Demo {
 
-    public static void menu(Scanner scnr,RouteList userList) throws IOException, URISyntaxException, InterruptedException, ApiException {
+    public static void menu(Scanner scnr,RouteList userList,RouteList userHistory) throws IOException, URISyntaxException, InterruptedException, ApiException {
         int input;
         boolean cont = true;
         Route selectedRoute = new Route();
@@ -42,34 +42,49 @@ public class Demo {
                 selectedRoute = selectFromList(scnr, userList);
                 System.out.println("Great! how would you like to modify " + selectedRoute.getName() + "?");
                 modifyRoute(selectedRoute, scnr);
+
             } else if (input == 4) { //VIEW ROUTE HISTORY
-                System.out.println("WIP");
+                System.out.println("Route History: Enter a corresponding number to see details");
+                selectHistory(scnr,userHistory);
+
             } else if (input == 5) { //EXIT
                 System.out.println("Are you sure you would like to exit?");
                 System.out.println("ENTER 1 TO CONFIRM EXIT. ENTER ANYTHING ELSE TO CONTINUE.");
                 input = scnr.nextInt();
                 if (input == 1) {
                     System.out.println("Now exiting. See you next time!");
+                    return;
                 } else {
-                    menu(scnr, userList);
+                    menu(scnr, userList,userHistory);
                 }
+
             } else {
                 System.out.println("Unknown input detected. please try again.");
-                menu(scnr, userList);
+                menu(scnr, userList, userHistory);
             }
+
             System.out.println("Your current route is: " + selectedRoute.getName());
         System.out.println("Enter a number");
         System.out.println("1: Confirm your ride.");
         System.out.println("2: Create/Select/Modify another route");
         System.out.println("Other: EXIT");
+
         input = scnr.nextInt();
         if (input == 1){
-            getRoute.ConfirmRoute(getRoute.makeRoute(selectedRoute.getOrigin().returnAddress(), selectedRoute.getDestination().returnAddress()));
+            selectedRoute.convertToReq();
+            selectedRoute.convertToRes();
             System.out.println("Route booked!");
-            menu(scnr,userList);
+            userHistory.addToList(selectedRoute);
+
+            System.out.println("Would you like printed directions? Enter 1 for yes, anything else to return to menu.");
+            input = scnr.nextInt();
+            if (input == 1){
+                selectedRoute.showDirections();
+            }
+            menu(scnr,userList,userHistory);
         }
         else if (input == 2){
-            menu(scnr,userList);
+            menu(scnr,userList,userHistory);
         }
         else{
             System.out.println("Thank you for trying the route reservation demo!");
@@ -177,17 +192,45 @@ public class Demo {
         }
         return rte;
     }
-    public static Route selectFromList(Scanner scnr, RouteList userList){
+    public static Route selectFromList(Scanner scnr, RouteList userList) {
         int input;
         Route buffRte = new Route();
         System.out.println("Enter the corresponding number to your desired route.");
         userList.displayList();
         input = scnr.nextInt();
+        input = input - 1;
+        for (int i = 0; i < userList.getRouteList().size(); i++) {
+            if (input == i) {
+                System.out.println("You selected: " + userList.getRouteList().get(i).getName());
+                return userList.getRouteList().get(i);
+            }
+        }
+
+        System.out.println("Route not recognized. Enter 1 to retry. Enter anything else to return to the main menu.");
+        input = scnr.nextInt();
+        if (input == 1) {
+            selectFromList(scnr, userList);
+        } else {
+            return buffRte;
+        }
+
+        return buffRte;
+    }
+
+    public static void selectHistory(Scanner scnr, RouteList userList){
+        int input;
+        String d;
+        Route buffRte = new Route();
+        System.out.println("Enter the corresponding number to see route info.");
+        userList.displayList();
+        input = scnr.nextInt();
         input--;
         for (int i = 0; i < userList.getRouteList().size(); i++){
             if (input == i){
-                System.out.println("You selected: " + userList.getRouteList().get(i).getName());
-                return userList.getRouteList().get(i);
+                userList.getRouteList().get(i).printSummary();
+                System.out.println("Press anything to return.");
+                d = scnr.nextLine();
+                return;
             }
             else {
                 System.out.println("Route not recognized. Enter 1 to retry. Enter anything else to return to the main menu.");
@@ -196,14 +239,14 @@ public class Demo {
                     selectFromList(scnr,userList);
                 }
                 else{
-                    return buffRte;
+                    return;
                 }
             }
         }
-        return buffRte;
+        return;
     }
 
-    public static address inputAddress(address addy, Scanner scnr){
+    public static address inputAddress(address addy, Scanner scnr){//INPUT ADDRESS FROM TEXT
         System.out.println("Enter the following parts of your desired address:");
         System.out.println("street address");
         addy.setStreet(scnr.nextLine());
@@ -217,7 +260,7 @@ public class Demo {
         return addy;
     }
 
-    public static RouteList loadDemoRoutes(){
+    public static RouteList loadDemoRoutes(){ //SAMPLE ROUTES FOR DEMO
         ArrayList<Route> demoRoutes = new ArrayList<>();
         address demo1 = new address("1834 Wake Forest Rd", "Winston-Salem", "NC");
         address demo2 = new address("515 Rock Glen Dr", "Wynnewood", "Pennsylvania");
@@ -245,19 +288,10 @@ public class Demo {
     public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException, ApiException {
        Scanner scnr = new Scanner(System.in);
        RouteList demoList = loadDemoRoutes();
+       ArrayList<Route> emptHistory = new ArrayList<>();
+       RouteList history = new RouteList(emptHistory);
 
-       menu(scnr,demoList);
-
-
-       /*
-        DirectionsApiRequest demoReq = makeRoute("Winston-Salem","San Diego");
-        DirectionsResult demoRes = new DirectionsResult();
-        demoRes = getRoute.ConfirmRoute(demoReq);
-
-        System.out.println(getRoute.getRouteTime(demoRes));
-        getRoute.displaySummary(demoRes);
-
-        */
+       menu(scnr,demoList,history);
 
 
     }
