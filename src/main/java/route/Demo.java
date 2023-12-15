@@ -115,7 +115,7 @@ public class Demo {
             while (cont){
                 System.out.println("Enter the waypoint address.");
                 inputAddress(buffer,scnr);
-                wypts.set(inc, buffer);
+                wypts.add(inc, buffer);
                 inc++;
                 System.out.println("Enter 1 if you would like to enter another waypoint. If not, press anything else.");
                 input = scnr.nextInt();
@@ -137,9 +137,11 @@ public class Demo {
             rte = modifyRoute(rte,scnr);
         }
 
+        scnr.nextLine();
         System.out.println("Would you like to save your route for future use? Enter 1 if yes.");
         input = scnr.nextInt();
         if (input == 1){
+            scnr.nextLine();
             System.out.println("Enter a name for your route.");
             rte.setName(scnr.nextLine());
             userList.addToList(rte);
@@ -173,6 +175,7 @@ public class Demo {
             } else if (input == 3) {
                 System.out.println("Enter a new waypoint");
                 inputAddress(buffer,scnr);
+                scnr.nextLine();
                 rte.getWaypoints().add(buffer);
 
             } else if (input == 4) {
@@ -248,6 +251,7 @@ public class Demo {
 
     public static address inputAddress(address addy, Scanner scnr){//INPUT ADDRESS FROM TEXT
         System.out.println("Enter the following parts of your desired address:");
+        scnr.nextLine();
         System.out.println("street address");
         addy.setStreet(scnr.nextLine());
         System.out.println("city");
