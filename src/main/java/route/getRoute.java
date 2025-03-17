@@ -45,7 +45,7 @@ public class getRoute {
 
 //    Creates object GeoApiContext which allows use of GoogleMaps API with my key
     private static GeoApiContext getGeoContext(){
-        GeoApiContext GAC = new GeoApiContext.Builder().apiKey("AIzaSyCbnDCkBTkka8zF9S2V5VAJ_HdIWojwDpQ").build();
+        GeoApiContext GAC = new GeoApiContext.Builder().apiKey("ENTER YOUR GOOGLE MAPS API KEY HERE").build();
         return GAC;
     }
 
